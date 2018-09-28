@@ -1,2 +1,2 @@
-# client_server_scripts
-Scripts to test network communications between client and server
+# Network Traffic Generators
+Python scripts that generates generic network traffic
