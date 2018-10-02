@@ -4,10 +4,10 @@ import time
 import random
 
 # Variables
-IPIFACE = "192.168.1.113"
+IPIFACE = "8.8.8.8"
 PORT = 12347
 BUF = b'x' * random.randint(800,1500)
-BLOCKING = True
+BLOCKING = 0
 SLEEP = False
 SLEEPTIME = 0.01
 PRINT = False

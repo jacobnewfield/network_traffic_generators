@@ -5,11 +5,13 @@ import getpass
 import time
 
 # Variables
-NUMRUNSCRIPT = 0
+NUMIFACE = 1
+NUMVPN = 1
 IFACESCRIPT = 'ifacetraffic.py'
 VPNSCRIPT = 'vpntraffic.py'
 PASSWORD = ''
 PASSWORDCHECK = True
+CLEARLOGS = False
 
 # Get sudo password for commands requiring elevation rights
 if PASSWORDCHECK:
@@ -37,17 +39,20 @@ def runcommand( command ):
         )
 
 # Main
-#command = 'rm -f ~/Library/Logs/F5Networks/*.log'
-#runcommand( command )
+if CLEARLOGS:
+    command = 'rm -f ~/Library/Logs/F5Networks/*.log'
+    runcommand( command )
 print 'Ramping up connections...'
-command = 'python %s' % VPNSCRIPT
-runcommand( command )
-time.sleep(1)
-command = 'python %s' % IFACESCRIPT
-for _ in range(NUMRUNSCRIPT):
+if NUMVPN:
+    command = 'python %s' % VPNSCRIPT
+    runcommand( command )
+    time.sleep(1)
+if NUMIFACE:
+    command = 'python %s' % IFACESCRIPT
+    for _ in range(NUMIFACE):
 	runcommand( command )
 	time.sleep(0.5)
-response = raw_input("Running 1 instance of %s and %s instances of %s\nPress Enter to stop..." % (VPNSCRIPT, NUMRUNSCRIPT, IFACESCRIPT))
+response = raw_input("Running %s instance of %s and %s instances of %s\nPress Enter to stop..." % (NUMVPN, VPNSCRIPT, NUMIFACE, IFACESCRIPT))
 
 command = "echo %s | sudo -S printf 'Stopping script instances...\n' | for pid in $(ps axc|awk '{if ($5==\"python\") print $1}'); do sudo kill -9 $pid; done;" % PASSWORD
 runcommand( command )
