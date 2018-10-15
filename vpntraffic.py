@@ -4,7 +4,7 @@ import time
 import random
 
 # Variables
-IPVPN = "10.10.10.16"
+IPVPN = ""
 PORT = 12346
 BUF = b'x' * random.randint(600,1500)
 BLOCKING = 0

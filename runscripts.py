@@ -4,12 +4,17 @@ import subprocess
 import getpass
 import time
 import sys
+import os
+import signal
 
 # Variables
-NUMIFACE = 10
-NUMVPN = 1
+NUMIFACE = 1
+NUMVPN = 0
+IPERF = False
 IFACESCRIPT = 'ifacetraffic.py'
 VPNSCRIPT = 'vpntraffic.py'
+IPERFSCRIPT = 'iperftraffic.py'
+PIDS = []
 PASSWORD = ''
 PASSWORDCHECK = True
 CLEARLOGS = False
@@ -35,7 +40,7 @@ if ("-h" in str(sys.argv)) or ("--help" in str(sys.argv).lower()):
     quit()
 
 # Get sudo password for commands requiring elevation rights
-if PASSWORDCHECK:
+if PASSWORDCHECK == '':
 	# Get and confirm password works
 	FAIL = True
 	print "Enter your password"
@@ -58,22 +63,28 @@ def runcommand( command ):
         #stdout=subprocess.PIPE,
         #stderr=subprocess.PIPE,
         )
+    PIDS.append(executecommand.pid)
 def exit():
-    command = "echo %s | sudo -S printf 'Stopping script instances...\n' | for pid in $(ps axc|awk '{if ($5==\"python\") print $1}'); do sudo kill -9 $pid; done;" % PASSWORD
-    runcommand( command ) 
-    quit(1)
+    for pid in PIDS:
+        os.kill(pid, signal.SIGTERM)
+    sys.exit(0)
 # Main
 if CLEARLOGS:
     command = 'rm -f ~/Library/Logs/F5Networks/*.log'
     runcommand( command )
     print "F5 logs cleared"
+    time.sleep(1)
     exit()
 print 'Ramping up connections...'
+if IPERF:
+    command = 'python %s' % IPERFSCRIPT
+    runcommand( command )
 if NUMVPN:
+    #time.sleep(5)
     command = 'python %s' % VPNSCRIPT
     runcommand( command )
-    time.sleep(1)
 if NUMIFACE:
+   # time.sleep(10)
     command = 'python %s' % IFACESCRIPT
     for _ in range(NUMIFACE):
 	runcommand( command )
