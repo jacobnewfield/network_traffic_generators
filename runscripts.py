@@ -16,7 +16,6 @@ VPNSCRIPT = 'vpntraffic.py'
 IPERFSCRIPT = 'iperftraffic.py'
 PIDS = []
 PASSWORD = ''
-PASSWORDCHECK = True
 CLEARLOGS = False
 if "-c" in str(sys.argv):
     CLEARLOGS = True
@@ -40,7 +39,7 @@ if ("-h" in str(sys.argv)) or ("--help" in str(sys.argv).lower()):
     quit()
 
 # Get sudo password for commands requiring elevation rights
-if PASSWORDCHECK == '':
+if PASSWORD == '':
 	# Get and confirm password works
 	FAIL = True
 	print "Enter your password"
